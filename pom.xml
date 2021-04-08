@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.kohsuke</groupId>
   <artifactId>github-api</artifactId>
-  <version>1.118-SNAPSHOT</version>
+  <version>1.127-SNAPSHOT</version>
   <name>GitHub API for Java</name>
   <url>https://github-api.kohsuke.org/</url>
   <description>GitHub API for Java</description>
@@ -33,19 +33,21 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spotbugs-maven-plugin.version>4.0.4</spotbugs-maven-plugin.version>
-    <spotbugs.version>4.1.2</spotbugs.version>
+    <spotbugs-maven-plugin.version>4.2.0</spotbugs-maven-plugin.version>
+    <spotbugs.version>4.2.2</spotbugs.version>
     <spotbugs-maven-plugin.failOnError>true</spotbugs-maven-plugin.failOnError>
     <hamcrest.version>2.2</hamcrest.version>
     <okhttp3.version>4.4.1</okhttp3.version>
     <okio.version>2.5.0</okio.version>
-    <formatter-maven-plugin.goal>format</formatter-maven-plugin.goal>
-    <impsort-maven-plugin.goal>sort</impsort-maven-plugin.goal>
     <!-- Using this as the minimum bar for code coverage.  Adding methods without covering them will fail this. -->
-    <jacoco.coverage.target.bundle.method>0.60</jacoco.coverage.target.bundle.method>
-    <jacoco.coverage.target.class.method>0.25</jacoco.coverage.target.class.method>
+    <jacoco.coverage.target.bundle.method>0.70</jacoco.coverage.target.bundle.method>
+    <jacoco.coverage.target.class.method>0.50</jacoco.coverage.target.class.method>
     <!-- For non-ci builds we'd like the build to still complete if jacoco metrics aren't met. -->
     <jacoco.haltOnFailure>false</jacoco.haltOnFailure>
+    <jjwt.suite.version>0.11.2</jjwt.suite.version>
+
+    <jacoco.surefire.argLine />
+    <surefire.argLine />
   </properties>
 
   <build>
@@ -106,6 +108,9 @@
               <goals>
                 <goal>prepare-agent</goal>
               </goals>
+              <configuration>
+                <propertyName>jacoco.surefire.argLine</propertyName>
+              </configuration>
             </execution>
             <!-- attached to Maven test phase -->
             <execution>
@@ -153,59 +158,39 @@
                       <!-- Sample only -->
                       <exclude>org.kohsuke.github.example.*</exclude>
 
-                      <!-- No methods -->
-                      <exclude>org.kohsuke.github.Previews</exclude>
 
                       <!-- Deprecated -->
                       <exclude>org.kohsuke.github.extras.OkHttp3Connector</exclude>
                       <exclude>org.kohsuke.github.EnforcementLevel</exclude>
                       <exclude>org.kohsuke.github.GHPerson.1</exclude>
-
-                      <!-- These fail coverage on windows because tests are disabled -->
-                      <exclude>org.kohsuke.github.GHAsset</exclude>
-                      <exclude>org.kohsuke.github.GHReleaseBuilder</exclude>
-                      <exclude>org.kohsuke.github.GHRelease</exclude>
+                      <!-- TODO: Some coverage, but more needed -->
+                      <exclude>org.kohsuke.github.GHPullRequestReviewBuilder.DraftReviewComment</exclude>
+                      <exclude>org.kohsuke.github.GHIssue.PullRequest</exclude>
+                      <exclude>org.kohsuke.github.GHCommitSearchBuilder</exclude>
+                      <exclude>org.kohsuke.github.GHRepositorySearchBuilder</exclude>
+                      <exclude>org.kohsuke.github.GHUserSearchBuilder</exclude>
 
                       <!-- TODO: These still need test coverage -->
                       <exclude>org.kohsuke.github.GHBranchProtection.RequiredSignatures</exclude>
                       <exclude>org.kohsuke.github.GHBranchProtectionBuilder.Restrictions</exclude>
                       <exclude>org.kohsuke.github.GHBranchProtection.Restrictions</exclude>
                       <exclude>org.kohsuke.github.GHCommentAuthorAssociation</exclude>
-                      <exclude>org.kohsuke.github.GHCommitBuilder.UserInfo</exclude>
-                      <exclude>org.kohsuke.github.GHCommitState</exclude>
                       <exclude>org.kohsuke.github.GHCompare.Commit</exclude>
                       <exclude>org.kohsuke.github.GHCompare.InnerCommit</exclude>
-                      <exclude>org.kohsuke.github.GHCompare.Status</exclude>
                       <exclude>org.kohsuke.github.GHCompare.Tree</exclude>
                       <exclude>org.kohsuke.github.GHCompare.User</exclude>
                       <exclude>org.kohsuke.github.GHCompare</exclude>
                       <exclude>org.kohsuke.github.GHDeployKey</exclude>
-                      <exclude>org.kohsuke.github.GHDeploymentStatusBuilder</exclude>
-                      <exclude>org.kohsuke.github.GHDirection</exclude>
                       <exclude>org.kohsuke.github.GHEmail</exclude>
-                      <exclude>org.kohsuke.github.GHEventPayload.Ping</exclude>
-                      <exclude>org.kohsuke.github.GHEventPayload.Release</exclude>
-                      <exclude>org.kohsuke.github.GHException</exclude>
-                      <exclude>org.kohsuke.github.GHHook</exclude>
-                      <exclude>org.kohsuke.github.GHHooks.OrgContext</exclude>
                       <exclude>org.kohsuke.github.GHInvitation</exclude>
-                      <exclude>org.kohsuke.github.GHMilestoneState</exclude>
-                      <exclude>org.kohsuke.github.GHOrgHook</exclude>
-                      <exclude>org.kohsuke.github.GHProject.ProjectStateFilter</exclude>
                       <exclude>org.kohsuke.github.GHPullRequestCommitDetail.Authorship</exclude>
                       <exclude>org.kohsuke.github.GHPullRequestCommitDetail.Commit</exclude>
                       <exclude>org.kohsuke.github.GHPullRequestCommitDetail.CommitPointer</exclude>
                       <exclude>org.kohsuke.github.GHPullRequestCommitDetail.Tree</exclude>
                       <exclude>org.kohsuke.github.GHPullRequestCommitDetail</exclude>
                       <exclude>org.kohsuke.github.GHPullRequestFileDetail</exclude>
-                      <exclude>org.kohsuke.github.GHPullRequestQueryBuilder.Sort</exclude>
                       <exclude>org.kohsuke.github.GHReleaseUpdater</exclude>
-                      <exclude>org.kohsuke.github.GHRepository.ForkSort</exclude>
                       <exclude>org.kohsuke.github.GHRequestedAction</exclude>
-                      <exclude>org.kohsuke.github.GHStargazer</exclude>
-                      <exclude>org.kohsuke.github.GHTagObject</exclude>
-                      <exclude>org.kohsuke.github.GHTeam.Role</exclude>
-                      <exclude>org.kohsuke.github.GHUserSearchBuilder.Sort</exclude>
                       <exclude>org.kohsuke.github.GHVerifiedKey</exclude>
                     </excludes>
                   </rule>
@@ -261,7 +246,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.1</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.bcel</groupId>
@@ -293,18 +278,7 @@
             <id>default-test</id>
             <configuration>
               <excludesFile>src/test/resources/slow-or-flaky-tests.txt</excludesFile>
-            </configuration>
-          </execution>
-          <execution>
-            <id>slow-or-flaky-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <rerunFailingTestsCount>2</rerunFailingTestsCount>
-              <!-- There are some tests that take longer or are a little flaky.  Run them here. -->
-              <includesFile>src/test/resources/slow-or-flaky-tests.txt</includesFile>
+              <argLine>@{jacoco.surefire.argLine} ${surefire.argLine}</argLine>
             </configuration>
           </execution>
         </executions>
@@ -312,7 +286,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.19</version>
+        <version>1.20</version>
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
@@ -343,37 +317,35 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>net.revelc.code.formatter</groupId>
-        <artifactId>formatter-maven-plugin</artifactId>
-        <version>2.12.1</version>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>2.9.0</version>
         <executions>
           <execution>
+            <id>spotless-check</id>
+            <!-- runs in verify phase by default -->
             <goals>
-              <goal>${formatter-maven-plugin.goal}</goal>
+              <!-- can be disabled using -Dspotless.check.skip=true -->
+              <goal>check</goal>
             </goals>
-            <configuration>
-              <configFile>src/main/resources/eclipse/formatter.xml</configFile>
-              <cachedir>${project.build.directory}/.cache</cachedir>
-            </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>net.revelc.code</groupId>
-        <artifactId>impsort-maven-plugin</artifactId>
-        <version>1.4.1</version>
         <configuration>
-          <groups>*,java.,javax.</groups>
-          <removeUnused>true</removeUnused>
-          <staticAfter>true</staticAfter>
+          <java>
+            <eclipse>
+              <file>${basedir}/src/build/eclipse/formatter.xml</file>
+            </eclipse>
+
+            <importOrder>
+              <file>${basedir}/src/build/eclipse/eclipse.importorder</file>
+            </importOrder>
+            <removeUnusedImports />
+
+            <trimTrailingWhitespace />
+            <endWithNewline />
+
+          </java>
         </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>${impsort-maven-plugin.goal}</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>com.github.spotbugs</groupId>
@@ -411,6 +383,12 @@
       <version>3.9</version>
     </dependency>
     <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit</artifactId>
+      <version>0.17.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest</artifactId>
       <version>${hamcrest.version}</version>
@@ -432,13 +410,19 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.1</version>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>4.0.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.10.2</version>
+      <version>2.12.1</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
@@ -469,7 +453,7 @@
     <dependency>
       <groupId>org.kohsuke.stapler</groupId>
       <artifactId>stapler</artifactId>
-      <version>1.260</version>
+      <version>1.262</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -481,26 +465,26 @@
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit</artifactId>
-      <version>5.9.0.202009080501-r</version>
+      <version>5.11.0.202103091610-r</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>
-      <version>0.11.2</version>
-      <scope>test</scope>
+      <version>${jjwt.suite.version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-impl</artifactId>
-      <version>0.11.2</version>
-      <scope>test</scope>
+      <version>${jjwt.suite.version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-jackson</artifactId>
-      <version>0.11.2</version>
-      <scope>test</scope>
+      <version>${jjwt.suite.version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>com.squareup.okio</groupId>
@@ -537,7 +521,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>3.6.0</version>
+      <version>3.9.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -561,7 +545,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.2</version>
+      <version>1.7.30</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -578,6 +562,48 @@
     </pluginRepository>
   </pluginRepositories>
   <profiles>
+    <!-- only enable slow-or-flaky-test if -Dtest= is not present -->
+    <profile>
+      <id>slow-or-flaky-test</id>
+      <activation>
+        <property>
+          <name>!test</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>slow-or-flaky-test</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <rerunFailingTestsCount>2</rerunFailingTestsCount>
+                  <!-- There are some tests that take longer or are a little
+                    flaky. Run them here. -->
+                  <includesFile>src/test/resources/slow-or-flaky-tests.txt</includesFile>
+                  <argLine>@{jacoco.surefire.argLine} ${surefire.argLine}</argLine>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jdk11+</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <properties>
+        <!-- this is required for GithubHttpUrlConnectionClient#setRequestMethod() to work with JDK 16+ -->
+        <surefire.argLine>--add-opens java.base/java.net=ALL-UNNAMED</surefire.argLine>
+      </properties>
+    </profile>
     <profile>
       <id>ci-non-windows</id>
       <activation>
@@ -589,8 +615,8 @@
         </os>
       </activation>
       <properties>
-        <formatter-maven-plugin.goal>validate</formatter-maven-plugin.goal>
-        <impsort-maven-plugin.goal>check</impsort-maven-plugin.goal>
+        <!-- Only fail code coverage on non-windows machines -->
+        <jacoco.haltOnFailure>true</jacoco.haltOnFailure>
       </properties>
     </profile>
     <profile>
@@ -600,24 +626,55 @@
           <name>enable-ci</name>
         </property>
       </activation>
-      <properties>
-        <jacoco.haltOnFailure>true</jacoco.haltOnFailure>
-      </properties>
       <build>
         <plugins>
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
           </plugin>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>spotless-check</id>
+                <!-- In CI, run check early in the build -->
+                <phase>process-sources</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <version>3.0.0-M3</version>
+            <executions>
+              <execution>
+                <id>enforce-jacoco-exist</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireFilesExist>
+                      <files>
+                        <file>${project.build.directory}/jacoco.exec</file>
+                      </files>
+                    </requireFilesExist>
+                  </rules>
+                  <fail>true</fail>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
       </build>
     </profile>
     <profile>
       <id>release</id>
-      <properties>
-        <formatter-maven-plugin.goal>validate</formatter-maven-plugin.goal>
-        <impsort-maven-plugin.goal>check</impsort-maven-plugin.goal>
-      </properties>
       <build>
         <plugins>
           <plugin>
